@@ -28,5 +28,5 @@
 
 <script lang="ts" setup>
 import SearchInput from "@/layouts/SearchInput.vue";
-import NewLink from "@/components/home/NewLink.vue";
+import NewLink from "@/components/home/Link/NewLink.vue";
 </script>

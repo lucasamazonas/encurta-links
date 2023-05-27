@@ -11,5 +11,5 @@
 <script lang="ts" setup>
 import Stats from '@/components/home/Stats.vue'
 import CentralOptions from '@/components/home/CentralOptions.vue'
-import LinkList from '@/components/home/LinkList.vue'
+import LinkList from '@/components/home/Link/LinkList.vue'
 </script>

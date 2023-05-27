@@ -21,14 +21,7 @@
         <IconBarChart />
       </v-btn>
 
-      <v-btn
-        icon
-        variant="text"
-        color="grey-darken-1"
-        class="ml-3"
-      >
-        <v-icon :size="20">mdi-trash-can-outline</v-icon>
-      </v-btn>
+      <DeleteLink />
     </div>
 
     <v-spacer />
@@ -57,4 +50,5 @@
 
 <script setup lang="ts">
 import IconBarChart from '@/components/icons/BarChart.vue'
+import DeleteLink from "@/components/home/Link/DeleteLink.vue";
 </script>
