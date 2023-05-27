@@ -1,6 +1,8 @@
 <template>
   <v-main>
-    <router-view />
+    <div class="w-66 mx-auto">
+      <router-view />
+    </div>
   </v-main>
 </template>
 

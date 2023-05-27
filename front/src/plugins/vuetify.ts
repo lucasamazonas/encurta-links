@@ -17,10 +17,17 @@ export default createVuetify({
     themes: {
       light: {
         colors: {
-          primary: '#1867C0',
-          secondary: '#5CBBF6',
+          primary: '#64B5F6',
+          secondary: '#90CAF9',
+          background: '#f6f6f6'
         },
       },
     },
   },
+  defaults: {
+    VDialog: {
+      width: 500,
+      transition: 'dialog-top-transition',
+    }
+  }
 })
