@@ -12,12 +12,6 @@
 </template>
 
 <script setup lang="ts">
-interface Stat {
-  icon: string,
-  value: number,
-  text: string,
-  sufix?: string
-}
 interface Props {
   stat: Stat
 }

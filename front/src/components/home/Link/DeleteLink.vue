@@ -16,11 +16,14 @@
       <TitleDialog
         title="Delete"
         icon="mdi-delete"
+        :disabled="loadingActive"
         @close="dialogActive = ! dialogActive"
       />
 
       <v-card-text class="pt-0">
-        <span class="text-caption">Do you really want to delete this link?</span>
+        <span class="text-caption">
+          {{ props.id ? 'Do you really want to delete this link?' : 'Do you really want to delete all links?' }}
+        </span>
       </v-card-text>
 
       <v-card-actions class="justify-end px-4 mt-n4">
@@ -29,7 +32,7 @@
           variant="text"
           color="red"
           :loading="loadingActive"
-          @click="save"
+          @click="deleteLink"
         >
           YES
         </v-btn>
@@ -41,12 +44,28 @@
 <script setup lang="ts">
 import {ref} from "vue";
 import TitleDialog from "@/components/utils/TitleDialog.vue";
+import {useHttp} from "@/plugins/http";
+
+const {http} = useHttp()
 
 interface Props {
   id?: string
 }
 
 const props = defineProps<Props>()
+const emit = defineEmits(['delete'])
 
 const dialogActive = ref(false)
+const loadingActive = ref(false)
+
+function deleteLink() {
+  loadingActive.value = true
+
+  http.delete(`links/${props.id || ''}`)
+    .then(() => {
+      emit('link-delete', {})
+      dialogActive.value = false
+      loadingActive.value = false
+    })
+}
 </script>

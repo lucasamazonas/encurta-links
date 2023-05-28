@@ -5,19 +5,26 @@ namespace App\Http\Controllers;
 use App\Http\Contracts\CrudLinkContract;
 use App\Http\Requests\StoreLinkRequest;
 use App\Http\Requests\UpdateLinkRequest;
+use App\Models\Click;
 use App\Models\Link;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\Response;
 
-class LinkControllerContract extends Controller implements CrudLinkContract
+class LinkController extends Controller implements CrudLinkContract
 {
     public function index(): JsonResponse
     {
         $links = Link::query()
+            ->from('links AS l')
+            ->selectRaw('*, (SELECT count(c.id)  FROM clicks AS c WHERE c.id_link = l.id) AS clicks')
             ->orderBy('created_at')
-            ->get()
-            ->toArray();
+            ->get();
+
+        foreach ($links as $link) {
+            $link->alias = config('app.url') . '/' . $link->id;
+        }
 
         return response()->json($links, Response::HTTP_OK);
     }
@@ -32,6 +39,7 @@ class LinkControllerContract extends Controller implements CrudLinkContract
 
         $newLink = new Link();
         $newLink->id = $id;
+        $newLink->name = $request->name;
         $newLink->url = $request->url;
         $newLink->save();
 
@@ -52,6 +60,7 @@ class LinkControllerContract extends Controller implements CrudLinkContract
     public function update(Link $link, UpdateLinkRequest $request): JsonResponse
     {
         $link->url = $request->url;
+        $link->name = $request->name;
         $link->save();
 
         return response()->json($link->refresh(), Response::HTTP_OK);
@@ -59,7 +68,20 @@ class LinkControllerContract extends Controller implements CrudLinkContract
 
     public function destroy(Link $link): JsonResponse
     {
-        $link->delete();
+        DB::transaction(function () use ($link) {
+            Click::where('id_link', $link->id)->delete();
+            $link->delete();
+        });
+
+        return response()->json(null, Response::HTTP_OK);
+    }
+
+    public function deleteAll(): JsonResponse
+    {
+        DB::transaction(function () {
+            Click::getQuery()->delete();
+            Link::getQuery()->delete();
+        });
 
         return response()->json(null, Response::HTTP_OK);
     }

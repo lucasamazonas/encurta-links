@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\LinkControllerContract;
+use App\Http\Controllers\LinkController;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,5 +14,5 @@ use App\Http\Controllers\LinkControllerContract;
 |
 */
 
-Route::get('', fn() => '');
-Route::resource('links', LinkControllerContract::class);
+Route::resource('links', LinkController::class);
+Route::delete('links', [LinkController::class, 'deleteAll']);

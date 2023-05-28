@@ -22,7 +22,17 @@
           variant="outlined"
           color="primary"
           clearable
+          :disabled="loadingActive || !!props.linkEdit"
+        />
+
+        <v-text-field
+          v-model="newLink.name"
+          label="Unique Identifier"
+          variant="outlined"
+          color="primary"
+          clearable
           :disabled="loadingActive"
+          :error-messages="getErrorsMessages('name')"
         />
 
         <v-text-field
@@ -33,7 +43,7 @@
           clearable
           class="mt-2"
           :disabled="loadingActive"
-          :error-messages="getErrorsMenssages('url')"
+          :error-messages="getErrorsMessages('url')"
         />
       </v-card-text>
 
@@ -56,12 +66,12 @@
 import {ref, watch} from "vue";
 import TitleDialog from "@/components/utils/TitleDialog.vue";
 import { useVuelidate } from '@vuelidate/core'
-import { required, url } from '@vuelidate/validators'
+import {maxLength, required, url} from '@vuelidate/validators'
+import {useHttp} from '@/plugins/http'
+import {useLinksStore} from "@/store/links";
 
-interface Link {
-  id: string,
-  url: string,
-}
+const {http} = useHttp()
+const linksStore = useLinksStore()
 
 interface Props {
   linkEdit?: Link
@@ -72,18 +82,28 @@ const props = defineProps<Props>()
 const dialogActive = ref(false)
 const loadingActive = ref(false)
 
-const newLink = ref<Link>({
+const newLink = ref<NewLink>({
   id: '',
-  url: '',
+  name: '',
+  url: ''
 })
 
 watch(dialogActive, () => {
   if (props.linkEdit === undefined) return;
-  newLink.value = { ...props.linkEdit }
+  const { id, name, url } = props.linkEdit;
+  newLink.value = { id, name, url }
 })
 
 const rules = {
-  url: { required, url }
+  name: {
+    required,
+    maxLength: maxLength(60)
+  },
+  url: {
+    required,
+    url,
+    maxLength: maxLength(60)
+  }
 }
 const $v = useVuelidate(rules, newLink)
 
@@ -92,28 +112,48 @@ function close() {
   $v.value.$reset();
   newLink.value = {
     id: '',
-    url: ''
+    name: '',
+    url: '',
   }
 }
 
-function getErrorsMenssages(key: 'id' | 'url'): string {
-  if (!$v.value[key].$dirty) return ''
-
-  if ($v.value[key].required.$invalid) return $v.value[key].required.$message
-  if (key === 'url' && $v.value[key].url.$invalid) return $v.value[key].url.$message
-
-  return '';
+function getErrorsMessages(key: 'name' | 'url'): string {
+  if (!$v.value[key].$dirty || $v.value[key].$errors.length === 0) return ''
+  const [firstError] = $v.value[key].$errors
+  return String(firstError.$message)
 }
 
 function save() {
   $v.value.$touch();
-
   if ($v.value.$invalid) return;
 
-  const params = {
-    ...newLink.value,
-    id: props.linkEdit?.id
+  loadingActive.value = true
+
+  if (!props.linkEdit?.id) {
+    create(newLink.value)
+    return
   }
-  console.log('ok')
+
+  const params: UpdateLink = {
+    ...newLink.value,
+    id: props.linkEdit.id
+  }
+  update(params)
+}
+
+function create(newLink: NewLink) {
+  http.post('links', newLink)
+    .then(savedSuccessfully)
+}
+
+function update(link: UpdateLink) {
+  http.put(`links/${link.id}`, link)
+    .then(savedSuccessfully)
+}
+
+function savedSuccessfully() {
+  close()
+  loadingActive.value = false
+  linksStore.executeCallbackUpdateListLinks()
 }
 </script>

@@ -3,23 +3,24 @@
     <v-icon color="grey-darken-1">mdi-dots-vertical</v-icon>
 
     <div class="w-100 px-3">
-      <p class="font-weight-medium text-subtitle-1">{{ props.link.id }}</p>
+      <p class="font-weight-medium text-subtitle-1">{{ props.link.name }}</p>
       <a
         class="font-weight-medium text-caption text-blue mt-n1 text-decoration-none"
-        :href="props.link.url"
+        :href="props.link.alias"
         target="_blank"
         v-text="props.link.alias"
+        @click="clickLink"
       />
     </div>
 
     <div class="d-flex align-center">
       <div class="d-flex align-center text-blue-grey-lighten-2">
-        <span class="text-caption mt-1 mr-1">0</span>
+        <span class="text-caption mt-1 mr-1">{{ props.link.clicks }}</span>
         <v-icon :size="13">mdi-poll</v-icon>
         <v-icon :size="13" class="ml-n2px">mdi-poll</v-icon>
       </div>
 
-      <CopyValue :value="link.alias">
+      <CopyValue :value="props.link.alias">
         <template #default="{ copy }">
           <v-btn
             icon
@@ -47,7 +48,7 @@
         </template>
       </NewLink>
 
-      <DeleteLink :id="link.id" />
+      <DeleteLink :id="link.id" @link-delete="ev => $emit('link-delete', ev)" />
     </div>
   </div>
 </template>
@@ -56,16 +57,20 @@
 import NewLink from "@/components/home/Link/NewLink.vue";
 import CopyValue from "@/components/utils/CopyValue.vue";
 import DeleteLink from "@/components/home/Link/DeleteLink.vue";
+import {useLinksStore} from "@/store/links";
+
+const linksStore = useLinksStore()
 
 interface Props {
-  link: {
-    id: string,
-    url: string,
-    alias: string,
-  }
+  link: Link
 }
 
 const props = defineProps<Props>()
+defineEmits(['link-delete'])
+
+function clickLink() {
+  setTimeout(linksStore.executeCallbackUpdateListLinks, 500)
+}
 </script>
 
 <style scoped>

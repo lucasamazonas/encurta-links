@@ -6,9 +6,7 @@
       </div>
 
       <div class="w-50 d-flex align-center justify-space-between">
-        <v-btn color="#afafaf" icon>
-          <v-icon>mdi-magnify</v-icon>
-        </v-btn>
+        <v-icon color="#afafaf" class="mr-3">mdi-magnify</v-icon>
 
         <SearchInput class="mx-1" />
 

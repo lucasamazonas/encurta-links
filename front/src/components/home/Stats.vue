@@ -9,7 +9,7 @@
     </div>
 
     <div class="d-flex align-center justify-space-between">
-      <Stat
+      <ItemStat
         v-for="(stat, key) in stats"
         :key="key"
         :stat="stat"
@@ -19,13 +19,16 @@
 </template>
 
 <script setup lang="ts">
-import {ref} from "vue";
-import Stat from "@/components/home/Stat.vue";
+import ItemStat from '@/components/home/Stat.vue'
+import {useLinksStore} from '@/store/links'
+import {computed} from "vue";
 
-const stats = ref([
+const linksStore = useLinksStore()
+
+const stats = computed((): Stat[] => ([
   {
     icon: 'mdi-link-variant',
-    value: 0,
+    value: linksStore.items.length,
     text: 'Links'
   },
   {
@@ -35,7 +38,7 @@ const stats = ref([
   },
   {
     icon: 'mdi-cursor-default-click-outline',
-    value: 0,
+    value: linksStore.totalClicks,
     text: 'Clicks'
   },
   {
@@ -50,7 +53,7 @@ const stats = ref([
     text: 'Avg Time',
     sufix: 's'
   }
-])
+]))
 </script>
 
 <style scoped>

@@ -4,7 +4,7 @@
 
 <script setup lang="ts">
 interface Props {
-  value: string | number
+  value: string
 }
 
 const props = defineProps<Props>()
