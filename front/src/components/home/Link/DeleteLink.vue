@@ -45,15 +45,16 @@
 import {ref} from "vue";
 import TitleDialog from "@/components/utils/TitleDialog.vue";
 import {useHttp} from "@/plugins/http";
+import {useLinksStore} from "@/store/links";
 
 const {http} = useHttp()
+const linksStore = useLinksStore()
 
 interface Props {
   id?: string
 }
 
 const props = defineProps<Props>()
-const emit = defineEmits(['delete'])
 
 const dialogActive = ref(false)
 const loadingActive = ref(false)
@@ -63,9 +64,17 @@ function deleteLink() {
 
   http.delete(`links/${props.id || ''}`)
     .then(() => {
-      emit('link-delete', {})
-      dialogActive.value = false
-      loadingActive.value = false
+      linksStore.executeCallbackUpdateListLinks()
+      close()
     })
+    .catch(() => {
+      alert('error deleting link')
+      close()
+    })
+}
+
+function close() {
+  dialogActive.value = false
+  loadingActive.value = false
 }
 </script>

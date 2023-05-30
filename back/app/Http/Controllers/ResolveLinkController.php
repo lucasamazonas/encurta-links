@@ -15,7 +15,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class ResolveLinkController extends Controller
 {
-    public function redirect(Link $link, Request $request)
+    public function resolve(Link $link, Request $request)
     {
         $click = new Click();
         $click->id_link = $link->id;

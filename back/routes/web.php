@@ -14,4 +14,4 @@ use App\Http\Controllers\ResolveLinkController;
 |
 */
 
-Route::get('/{link}', [ResolveLinkController::class, 'redirect']);
+Route::get('/{link}', [ResolveLinkController::class, 'resolve']);

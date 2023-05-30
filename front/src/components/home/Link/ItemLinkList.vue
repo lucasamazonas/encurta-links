@@ -48,7 +48,7 @@
         </template>
       </NewLink>
 
-      <DeleteLink :id="link.id" @link-delete="ev => $emit('link-delete', ev)" />
+      <DeleteLink :id="link.id" />
     </div>
   </div>
 </template>
@@ -66,7 +66,6 @@ interface Props {
 }
 
 const props = defineProps<Props>()
-defineEmits(['link-delete'])
 
 function clickLink() {
   setTimeout(linksStore.executeCallbackUpdateListLinks, 500)

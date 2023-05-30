@@ -22,13 +22,15 @@
 import ItemStat from '@/components/home/Stat.vue'
 import {useLinksStore} from '@/store/links'
 import {computed} from "vue";
+import {useLinksSearch} from "@/components/home/Link/LinksSearch";
 
 const linksStore = useLinksStore()
+const {linksSearch} = useLinksSearch()
 
 const stats = computed((): Stat[] => ([
   {
     icon: 'mdi-link-variant',
-    value: linksStore.items.length,
+    value: linksSearch.value.length,
     text: 'Links'
   },
   {

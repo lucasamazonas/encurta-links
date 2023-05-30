@@ -23,16 +23,18 @@
           color="primary"
           clearable
           :disabled="loadingActive || !!props.linkEdit"
+          @keyup.enter="save"
         />
 
         <v-text-field
           v-model="newLink.name"
-          label="Unique Identifier"
+          label="Name"
           variant="outlined"
           color="primary"
           clearable
           :disabled="loadingActive"
           :error-messages="getErrorsMessages('name')"
+          @keyup.enter="save"
         />
 
         <v-text-field
@@ -44,6 +46,7 @@
           class="mt-2"
           :disabled="loadingActive"
           :error-messages="getErrorsMessages('url')"
+          @keyup.enter="save"
         />
       </v-card-text>
 
@@ -144,11 +147,19 @@ function save() {
 function create(newLink: NewLink) {
   http.post('links', newLink)
     .then(savedSuccessfully)
+    .catch(() => {
+      alert('error creating link')
+      close()
+    })
 }
 
 function update(link: UpdateLink) {
   http.put(`links/${link.id}`, link)
     .then(savedSuccessfully)
+    .catch(() => {
+      alert('error updating link')
+      close()
+    })
 }
 
 function savedSuccessfully() {
